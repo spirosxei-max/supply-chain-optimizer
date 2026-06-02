@@ -75,7 +75,7 @@ with col5_max:
     max_truck = st.number_input("Max Truck", min_value=min_truck, value=150, key="max_tr")
 with col5_slide:
     val_truck = min(max(50, min_truck), max_truck)
-    truck_cap = st.slider("Maximum Capacity of Trucks (ΚΔ)", min_value=min_truck, max_value=max_truck, value=val_truck)
+    truck_cap = st.slider("Maximum Capacity of Trucks (Distribution Center)", min_value=min_truck, max_value=max_truck, value=val_truck)
 
 st.markdown("---")
 
@@ -84,19 +84,19 @@ prob = pulp.LpProblem("Robust_Supply_Chain", pulp.LpMinimize)
 
 # Μεταβλητές Ροής
 x1 = pulp.LpVariable('x1_E1_A1', lowBound=0)
-x2 = pulp.LpVariable('x2_E1_KD', lowBound=0, upBound=truck_cap)
-x3 = pulp.LpVariable('x3_E2_KD', lowBound=0, upBound=truck_cap)
+x2 = pulp.LpVariable('x2_E1_DC', lowBound=0, upBound=truck_cap)
+x3 = pulp.LpVariable('x3_E2_DC', lowBound=0, upBound=truck_cap)
 x4 = pulp.LpVariable('x4_E2_A2', lowBound=0, upBound=truck_cap)
-x5 = pulp.LpVariable('x5_KD_A1', lowBound=0, upBound=truck_cap)
-x6 = pulp.LpVariable('x6_KD_A2', lowBound=0, upBound=truck_cap)
+x5 = pulp.LpVariable('x5_DC_A1', lowBound=0, upBound=truck_cap)
+x6 = pulp.LpVariable('x6_DC_A2', lowBound=0, upBound=truck_cap)
 
 # Shortage Variables
 shortage_A1 = pulp.LpVariable('shortage_A1', lowBound=0)
 shortage_A2 = pulp.LpVariable('shortage_A2', lowBound=0)
 
 # Objective Function
-prob += (cost_E1_A1*x1 + cost_E1_KD*x2 + cost_E2_KD*x3 + cost_E2_A2*x4 + 
-         cost_KD_A1*x5 + cost_KD_A2*x6 + penalty_shortage*shortage_A1 + penalty_shortage*shortage_A2), "Total_Cost"
+prob += (cost_E1_A1*x1 + cost_E1_DC*x2 + cost_E2_DC*x3 + cost_E2_A2*x4 + 
+         cost_DC_A1*x5 + cost_DC_A2*x6 + penalty_shortage*shortage_A1 + penalty_shortage*shortage_A2), "Total_Cost"
 
 # Constraints
 prob += x1 + x2 <= cap_E1          
@@ -116,9 +116,9 @@ if total_shortage > 0:
 else:
     st.success("🎯 Optimal Solution: Total Demand has been covered with the minimum cost!")
 
-real_transport_cost = (cost_E1_A1*x1.varValue + cost_E1_KD*x2.varValue + 
-                       cost_E2_KD*x3.varValue + cost_E2_A2*x4.varValue + 
-                       cost_KD_A1*x5.varValue + cost_KD_A2*x6.varValue)
+real_transport_cost = (cost_E1_A1*x1.varValue + cost_E1_DC*x2.varValue + 
+                       cost_E2_DC*x3.varValue + cost_E2_A2*x4.varValue + 
+                       cost_DC_A1*x5.varValue + cost_DC_A2*x6.varValue)
 
 st.metric(label="📊 Actual Cost of Transportation (€)", value=f"{real_transport_cost:,.2f} €")
 
@@ -133,9 +133,9 @@ with c1:
     st.write(f"Ε1 → Α1: {x1.varValue} Units")
     st.write(f"Ε2 → Α2: {x4.varValue} Units")
 with c2:
-    st.markdown("**🚚 Trucks (Through ΚΔ)**")
-    st.write(f"Ε1 → ΚΔ: {x2.varValue} Units | Ε2 → ΚΔ: {x3.varValue} Units")
-    st.write(f"ΚΔ → Α1: {x5.varValue} Units | ΚΔ → Α2: {x6.varValue} Units")
+    st.markdown("**🚚 Trucks (Through DC)**")
+    st.write(f"Ε1 → DC: {x2.varValue} Units | Ε2 → DC: {x3.varValue} Units")
+    st.write(f"DC → Α1: {x5.varValue} Units | DC → Α2: {x6.varValue} Units")
 
 if total_shortage > 0:
     st.subheader("🚨 Shortages Report")
