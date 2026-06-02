@@ -9,11 +9,11 @@ st.write("Robust Distribution Network Optimization Model")
 
 # --- FIXED COSTS ---
 cost_E1_A1 = 700
-cost_E1_KD = 300
-cost_E2_KD = 500
+cost_E1_DC = 300
+cost_E2_DC = 500
 cost_E2_A2 = 1000
-cost_KD_A1 = 200
-cost_KD_A2 = 400
+cost_DC_A1 = 200
+cost_DC_A2 = 400
 penalty_shortage = 5000  # Large Cost if demand cannot be covered
 
 # --- GUI CONTROLS (Στο κεντρικό πάνελ για σωστή στοίχιση) ---
